@@ -1,0 +1,10 @@
+##############################################
+####Confounder: differ by 10% ################
+##############################################
+confound <- function(crude, adjust){ #crude and adjust are two logistic regression models
+  beta1 = logit.or.ci(crude)$OR
+  beta2 = logit.or.ci(adjust)$OR[1]
+  differ = (log(beta1)-log(beta2))/log(beta1)
+  return(differ) #if return >10%, then confound
+}
+##############################################
