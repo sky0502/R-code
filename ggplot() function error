@@ -1,0 +1,8 @@
+When writing ggplot() into a self-defined function, sometimes receive error
+  Error in eval(expr, envir, enclos) : object '...' not found
+
+There are 2 solutions.
+First, add environment = environment()
+  ggplot(data=dataset, aes(y, x), environment = environment()) + geom_boxplot(aes(fill = y))
+Second, change aes() to aes_string()
+  ggplot(data=dataset, aes_string("y","x")) + geom_boxplot(aes_string(fill = "y"))
