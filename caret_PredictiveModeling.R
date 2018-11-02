@@ -25,19 +25,19 @@ data(BostonHousing)
 summary(BostonHousing)
 dim(BostonHousing)
 ggplot(data = BostonHousing, aes(x = medv)) + geom_histogram()
-# Visualization
+# Visualization via lattice
 theme1 <- trellis.par.get()
 theme1$plot.symbol$col = rgb(.2, .2, .2, .4)
 theme1$plot.symbol$pch = 16
 theme1$plot.line$col = rgb(1, 0, 0, .7)
 theme1$plot.line$lwd <- 2
 trellis.par.set(theme1)
-featurePlot(x = BostonHousing[, c("age", "lstat", "tax")], 
+featurePlot(x = BostonHousing[, c("age", "lstat", "tax", "rad")], 
             y = BostonHousing$medv, 
             plot = "scatter",
             type = c("p", "smooth"),
             span = .5,
-            layout = c(3, 1))
+            layout = c(4, 1))
 featurePlot(x = BostonHousing[,c("medv", "nox", "dis", "crim")], 
             y = BostonHousing$chas, 
             plot = "box",
@@ -96,13 +96,13 @@ plrFit <- train(as.factor(medv) ~ ., data = training2,
 plrFit
 
 #alternate tuning grids: parameter vs hyperparameter
-#plrGrid <-  expand.grid(lambda = c(1:9 %o% 10^(-3:1)), 
-#                        cp = "bic")
-#plrFit2 <- train(as.factor(medv) ~ ., data = training2, 
-#                method = "plr",
-#                trControl = fitControl,
-#                tuneGrid = plrGrid)
-#plrFit2
+plrGrid <-  expand.grid(lambda = c(1:9 %o% 10^(-3:1)), 
+                        cp = "bic")
+plrFit2 <- train(as.factor(medv) ~ ., data = training2, 
+                method = "plr",
+                trControl = fitControl,
+                tuneGrid = plrGrid)
+plrFit2
 
 # Nearest Neighbor
 knnFit <- train(as.factor(medv) ~ ., data = training2, 
@@ -114,40 +114,49 @@ plot(knnFit)
 
 # Random Forest
 rfFit <- train(as.factor(medv) ~ ., data = training2, 
-                method = "rf", 
-                trControl = fitControl)
+               method = "rf", 
+               trControl = fitControl)
 rfFit
 
 # Support Vector Machines with Linear kernel
 svmFit <- train(as.factor(medv) ~ ., data = training2, 
-               method = "svmLinear", 
-               trControl = fitControl)
+                method = "svmLinear", 
+                trControl = fitControl)
 svmFit
 
 # Extract predictions and measure performance
 predict(rfFit, newdata = testing2[1:10, 1:13])
 confusionMatrix(data = predict(rfFit, testing2[, 1:13]), reference = as.factor(testing2[, 14]))
+predict(rfFit, newdata = testing2[1:10, 1:13], type = "prob")
 
-# Compare models
+
 
 #### trainning regression ####
 
 # Lasso Regression
 lassoFit <- train(medv ~ ., data = training, 
-               method = "lasso", 
-               trControl = fitControl)
+                  method = "lasso", 
+                  trControl = fitControl)
 lassoFit
+
+# Nearest Neighbor
+knnFit2 <- train(medv ~ ., data = training, 
+                method = "knn", 
+                trControl = fitControl,
+                tuneLength = 10)
+knnFit2
+plot(knnFit2)
 
 # Random Forest
 rfFit2 <- train(medv ~ ., data = training, 
-                  method = "rf", 
-                  trControl = fitControl)
+                method = "rf", 
+                trControl = fitControl)
 rfFit2
 
 # Support Vector Machine
 svmFit2 <- train(medv ~ ., data = training, 
-                method = "svmLinear", 
-                trControl = fitControl)
+                 method = "svmLinear", 
+                 trControl = fitControl)
 svmFit2
 
 # Extract Prediction and measure performance
