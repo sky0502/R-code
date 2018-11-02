@@ -129,6 +129,12 @@ predict(rfFit, newdata = testing2[1:10, 1:13])
 confusionMatrix(data = predict(rfFit, testing2[, 1:13]), reference = as.factor(testing2[, 14]))
 predict(rfFit, newdata = testing2[1:10, 1:13], type = "prob")
 
+# Compare models
+models_compare <- resamples(list(plr = plrFit, knn=knnFit, RF=rfFit, SVM=svmFit))
+summary(models_compare)
+scales <- list(x=list(relation="free"), y=list(relation="free"))
+bwplot(models_compare, scales=scales)
+
 
 
 #### trainning regression ####
@@ -162,6 +168,13 @@ svmFit2
 # Extract Prediction and measure performance
 predict(rfFit2, testing[1:10, -14])
 postResample(pred = predict(rfFit2, testing[, -14]), obs = testing$medv)
+
+# Compare models
+models_compare2 <- resamples(list(lasso = lassoFit, knn=knnFit2, RF=rfFit2, SVM=svmFit2))
+summary(models_compare2)
+scales <- list(x=list(relation="free"), y=list(relation="free"))
+bwplot(models_compare2, scales=scales)
+
 
 #### Variable importance ####
 rfImp <- varImp(rfFit)
